@@ -4,6 +4,5 @@ module.exports = {
     script : "./index.js",
     max_memory_restart:'1G',
     autorestart: true,
-    watch: "../"
   }]
 }
