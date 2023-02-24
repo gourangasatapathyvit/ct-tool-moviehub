@@ -4,7 +4,8 @@
   "description": "this is the configuration tool regarding movie site",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ./ecosystem.config.js",
+    "start2": "pm2 start ./ecosystem.config.js",
+    "start": "npm install pm2 -g && pm2 start ./ecosystem.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "NG group",
