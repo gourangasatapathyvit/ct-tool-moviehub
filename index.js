@@ -86,10 +86,11 @@ async function lora(msgChatId) {
 
 async function tbot() {
     bot.on('message', async (msg) => {
-        console.log('triggered');
+        // console.log('triggered');
         if (msg.text === '1') {
             let totalCounter = await lora(msg.chat.id)
             bot.sendMessage(msg.chat.id, `total record available - ${totalCounter}`);
+            bot.deleteMessage(msg.chat.id, msg.message_id)
         }
         else {
             bot.sendMessage(msg.chat.id, `you need to enter the right key to update your spreadsheet`);
