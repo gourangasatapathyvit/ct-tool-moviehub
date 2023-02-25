@@ -112,9 +112,9 @@ async function lora(msgChatId) {
             originCountry: rows[data].originCountry,
             productionHouse: rows[data].productionHouse.split(","),
             itemsInformation: {
-              itemType: rows[data].productionHouse.split(",")[0],
-              NumberOfSeasons: rows[data].productionHouse.split(",")[1],
-              NumberOfEpisods: rows[data].productionHouse.split(",")[2],
+              itemType: rows[data].itemsInformation.split(",")[0],
+              NumberOfSeasons: rows[data].itemsInformation.split(",")[1],
+              NumberOfEpisods: rows[data].itemsInformation.split(",")[2],
             },
           },
         },
