@@ -7,11 +7,11 @@ const TelegramBot = require("node-telegram-bot-api");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const mongoose = require("mongoose");
 const mongomodels = require("./mongomodels");
+
+const app = express();
 mongoose.set("strictQuery", true);
 const url = process.env.mongourl;
-
 const bot = new TelegramBot(process.env.token, { polling: true });
-
 const doc = new GoogleSpreadsheet(process.env.googleSpreadsheetApi);
 
 async function resizeImage(
@@ -155,8 +155,23 @@ async function tbot() {
   });
 }
 
-mongoose.connect(url, async () => {
-  console.log("mongo connected");
+tbot();
+
+// mongoose.connect(url, async () => {
+//   console.log("mongo connected");
+// });
+
+app.get("/", (req, res) => {
+  res.send({ status: "ok" });
 });
 
-tbot();
+mongoose.connect(url);
+mongoose.connection.once("open", () => {
+  app.emit("ready");
+});
+
+app.on("ready", function () {
+  app.listen(process.env.PORT || 8092, () => {
+    console.log("Server connected at:", process.env.PORT);
+  });
+});
