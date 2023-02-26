@@ -4,44 +4,47 @@
 
 // https://stackblitz.com/
 
-
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const movieMainPageSchema = mongoose.Schema({
-    results: [
-        {
-            yearOfRelease: String,
-            imagePath: String,
-            title: String,
-            overview: String,
-            originalLanguage: String,
-            imdbRating: String,
-            bookMarkStatus: {
-                type: String,
-                default: "fa-regular"
-            },
-            originCountry: String,
-            productionHouse: [String],
+  results: [
+    {
+      yearOfRelease: String,
+      imagePath: String,
+      moreInfoTitleImage: String,
+      allImageQualityLink: {
+        type: Array,
+        default: ["https://dummyimage.com/720x400"],
+      },
+      title: String,
+      overview: String,
+      originalLanguage: String,
+      imdbRating: String,
+      bookMarkStatus: {
+        type: String,
+        default: "fa-regular",
+      },
+      originCountry: String,
+      productionHouse: [String],
 
-            itemsInformation: {
-                itemType: {
-                    type: String,
-                    default: "not-defined"
-                },
-                NumberOfSeasons: {
-                    type: Number,
-                    default: 0
-                },
-                NumberOfEpisods: {
-                    type: Number,
-                    default: 0
-                }
-            }
-        }
-    ]
-})
-
+      itemsInformation: {
+        itemType: {
+          type: String,
+          default: "not-defined",
+        },
+        NumberOfSeasons: {
+          type: Number,
+          default: 0,
+        },
+        NumberOfEpisods: {
+          type: Number,
+          default: 0,
+        },
+      },
+    },
+  ],
+});
 
 module.exports = {
-    movieMainPageSchema: mongoose.model('movieMainPage', movieMainPageSchema),
-}
+  movieMainPageSchema: mongoose.model("movieMainPage", movieMainPageSchema),
+};

@@ -72,6 +72,7 @@ async function lora(msgChatId) {
 
   let tempCounter = parseInt(infoRows[0].counter);
   const rows = await sheet.getRows({ limit: undefined, offset: tempCounter });
+  let eachQualityLinkList = [];
 
   for (let data in rows) {
     let titleimageLink = await imageUpload(
@@ -79,22 +80,28 @@ async function lora(msgChatId) {
       process.env.accessToken,
       { width: 712, height: 400 }
     );
-    rows[data].titleimage = titleimageLink;
-    await rows[data].save();
 
-    // console.log(
-    //   rows[data].yearOfRelease,
-    //   rows[data].titleimage,
-    //   rows[data].title,
-    //   rows[data].overview,
-    //   rows[data].originalLanguage,
-    //   rows[data].imdbRating,
-    //   rows[data].originCountry,
-    //   rows[data].productionHouse.split(","),
-    //   rows[data].productionHouse.split(",")[0],
-    //   rows[data].productionHouse.split(",")[1],
-    //   rows[data].productionHouse.split(",")[2]
-    // );
+    let moreInfoTitleImageLink = await imageUpload(
+      rows[data].imagePath,
+      process.env.accessToken,
+      { width: 600, height: 300 }
+    );
+
+    let allImageQualityLinkList = rows[data].imageQuality.split(",");
+    eachQualityLinkList = [];
+
+    for (const item of allImageQualityLinkList) {
+      let eachQualityLink = await imageUpload(item, process.env.accessToken, {
+        width: 720,
+        height: 400,
+      });
+      eachQualityLinkList.push(eachQualityLink);
+    }
+
+    rows[data].titleimage = titleimageLink;
+    rows[data].moreInfoTitleImage = moreInfoTitleImageLink;
+    rows[data].allImageQualityLink = String(eachQualityLinkList);
+    await rows[data].save();
 
     await mongomodels.movieMainPageSchema.updateOne(
       {
@@ -105,6 +112,8 @@ async function lora(msgChatId) {
           results: {
             yearOfRelease: rows[data].yearOfRelease,
             imagePath: rows[data].titleimage,
+            moreInfoTitleImage: moreInfoTitleImageLink,
+            allImageQualityLink: rows[data].allImageQualityLink.split(","),
             title: rows[data].title,
             overview: rows[data].overview,
             originalLanguage: rows[data].originalLanguage,
@@ -121,7 +130,6 @@ async function lora(msgChatId) {
       }
     );
 
-    console.log("res", titleimageLink);
     bot.sendMessage(msgChatId, `uploaded - ${titleimageLink}`);
     tempCounter++;
   }
@@ -133,14 +141,12 @@ async function lora(msgChatId) {
   return tempCounter;
 
   // await sheet.loadCells('A1')
-  // console.log('==');
   // let a1 = sheet.getCell(0, 1);
   // const c6 = sheet.getCellByA1('C1')
 }
 
 async function tbot() {
   bot.on("message", async (msg) => {
-    // console.log('triggered');
     if (msg.text === "1") {
       let totalCounter = await lora(msg.chat.id);
       bot.sendMessage(msg.chat.id, `total record available - ${totalCounter}`);
@@ -157,9 +163,43 @@ async function tbot() {
 
 tbot();
 
-// mongoose.connect(url, async () => {
-//   console.log("mongo connected");
-// });
+// mongomodels.movieMainPageSchema.create(
+//   {
+//     "results": [
+//       {
+//         "yearOfRelease": "2022",
+//         "imagePath": "https://upload.wikimedia.org/wikipedia/en/d/d4/The_Kashmir_Files_poster.jpg",
+//         "moreInfoTitleImage":"https://upload.wikimedia.org/wikipedia/en/d/d4/The_Kashmir_Files_poster.jpg",
+//         "title": "The Kashmir Files",
+//         "overview": "Krishna endeavours to uncover the reason behind his parents' brutal killings in Kashmir. He is shocked to uncover a web of lies and conspiracies in connection with the massive genocide.",
+//         "originalLanguage": "hi",
+//         "imdbRating": "8.3",
+//         "originCountry": "india",
+//         "productionHouse": ["Zee Studios"],
+//         "itemsInformation": {
+//           "itemType": "Movie"
+//         }
+//       },
+//       {
+//         "yearOfRelease": "2019",
+//         "imagePath": "https://upload.wikimedia.org/wikipedia/en/d/dc/The_Family_Man.jpeg",
+//         "moreInfoTitleImage":"https://upload.wikimedia.org/wikipedia/en/d/dc/The_Family_Man.jpeg",
+//         "title": "The Family Man",
+//         "overview": "Srikant Tiwari is a middle-class man who also serves as a world-class spy; he tries to balance his familial responsibilities with those at the highly secretive special cell of the National Intelligence Agency.",
+//         "originalLanguage": "hi",
+//         "imdbRating": "7.4",
+//         "originCountry": "india",
+//         "productionHouse": ["D2R Films"],
+//         "itemsInformation": {
+//           "itemType": "Series",
+//           "NumberOfSeasons": 2,
+//           "NumberOfEpisods": 19
+//         }
+//       }
+//     ]
+//   }
+
+// )
 
 app.get("/", (req, res) => {
   res.send({ status: "ok" });
